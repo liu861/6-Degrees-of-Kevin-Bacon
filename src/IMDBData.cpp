@@ -13,6 +13,59 @@
 IMDBData::IMDBData(const std::string& fileName)
 {
 	// TODO: Implement
+    //open file
+    std::ifstream ifile(fileName);
+    if(ifile.is_open())
+    {
+        //string to store actor name
+        std::string actor = "";
+        //vector to store movie names
+        std::vector<std::string> movies;
+        //string to getlines from
+        std::string line;
+        //iterate through file
+        while(!ifile.eof())
+        {
+            //get a line
+            std::getline(ifile, line);
+            //if line is an actor
+            if(line[0] != '|')
+            {
+                //if actor DNE
+                if(actor == "")
+                {
+                    actor = line;
+                    movies.clear();
+                }
+                else
+                {
+                    //push actor into map
+                    mActorsToMoviesMap[actor] = movies;
+                    actor = line;
+                    movies.clear();
+                }
+            }
+            //line is a movie!
+            else
+            {
+                //push movies into movies vector
+                std::string movie = line.substr(1);
+                movies.push_back(movie);
+            }
+        }
+        ifile.close();
+    }
+    //if file could not be opened
+    else
+    {
+        std::cout << "Error: File " << fileName << " was not found" << std::endl;
+    }
+    
+    //generate movie to actors map
+    for(auto itr : mActorsToMoviesMap)
+    {
+        reverseMap(itr.first, itr.second);
+    }
 }
 
 // Function: reverseMap
