@@ -15,7 +15,13 @@ IMDBData::IMDBData(const std::string& fileName)
 	// TODO: Implement
     //open file
     std::ifstream ifile(fileName);
-    if(ifile.is_open())
+    //if file couldn't be opened
+    if(!ifile.is_open())
+    {
+        std::cout << "Error: File " << fileName << " was not found" << std::endl;
+    }
+    //otherwise open and iterate through file!
+    else
     {
         //string to store actor name
         std::string actor = "";
@@ -28,37 +34,36 @@ IMDBData::IMDBData(const std::string& fileName)
         {
             //get a line
             std::getline(ifile, line);
-            //if line is an actor
-            if(line[0] != '|')
-            {
-                //if actor DNE
-                if(actor == "")
-                {
-                    actor = line;
-                    movies.clear();
-                }
-                else
-                {
-                    //push actor into map
-                    mActorsToMoviesMap[actor] = movies;
-                    actor = line;
-                    movies.clear();
-                }
-            }
-            //line is a movie!
-            else
+            //if line is a movie
+            if(line[0] == '|')
             {
                 //push movies into movies vector
                 std::string movie = line.substr(1);
                 movies.push_back(movie);
             }
+            //otherwise the line is an actor!
+            else
+            {
+                //if prev actor clear
+                if(actor == "")
+                {
+                    //update prev actor
+                    actor = line;
+                    //clear movies
+                    movies.clear();
+                }
+                //otherwise we have a prev actor to push
+                else
+                {
+                    //push prev actor into map
+                    mActorsToMoviesMap[actor] = movies;
+                    actor = line;
+                    movies.clear();
+                }
+            }
         }
+        //close file
         ifile.close();
-    }
-    //if file could not be opened
-    else
-    {
-        std::cout << "Error: File " << fileName << " was not found" << std::endl;
     }
     
     //generate movie to actors map
