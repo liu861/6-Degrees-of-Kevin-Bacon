@@ -54,7 +54,7 @@ void actorFromMovies(IMDBData& data)
 	// TODO: Implement
     //prompt user for the name of a movie
     std::string movieName;
-    std::cout << "Please enter the name of a movie in the format <Name (Date)>: " << std::endl;
+    std::cout << "Please enter a movie in the format <Name (Date)>: " << std::endl;
     std::cout << "> ";
     std::getline(std::cin, movieName);
     //create vector of actors that were in the movie
@@ -63,14 +63,18 @@ void actorFromMovies(IMDBData& data)
     std::cout << movieName << " had " << actors.size() << " actors: " << std::endl;
     if(actors.size() == 0)
     {
+        std::cout << "--------------------------------------------------" << std::endl;
         std::cout << movieName << " is unknown!" << std::endl;
+        std::cout << "--------------------------------------------------" << std::endl;
     }
     else
     {
+        std::cout << "--------------------------------------------------" << std::endl;
         for(int i = 0; i < actors.size(); i++)
         {
             std::cout << actors[i] << std::endl;
         }
+        std::cout << "--------------------------------------------------" << std::endl;
     }
 }
 
