@@ -14,7 +14,6 @@
 // Returns: Nothing
 void moviesFromActor(IMDBData& data)
 {
-	// TODO: Implement
     //prompt user for actor name
     std::string actorName;
     std::cout << "Please enter an actor's name: " << std::endl;
@@ -53,6 +52,26 @@ void moviesFromActor(IMDBData& data)
 void actorFromMovies(IMDBData& data)
 {
 	// TODO: Implement
+    //prompt user for the name of a movie
+    std::string movieName;
+    std::cout << "Please enter the name of a movie in the format <Name (Date)>: " << std::endl;
+    std::cout << "> ";
+    std::getline(std::cin, movieName);
+    //create vector of actors that were in the movie
+    const std::vector<std::string>& actors = data.getActorsFromMovie(movieName);
+    //display all actors in that movie
+    std::cout << movieName << " had " << actors.size() << " actors: " << std::endl;
+    if(actors.size() == 0)
+    {
+        std::cout << movieName << " is unknown!" << std::endl;
+    }
+    else
+    {
+        for(int i = 0; i < actors.size(); i++)
+        {
+            std::cout << actors[i] << std::endl;
+        }
+    }
 }
 
 // Option 3

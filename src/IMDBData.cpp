@@ -83,7 +83,7 @@ void IMDBData::reverseMap(const std::string& actorName, const std::vector<std::s
 {
     for(int i = 0; i < movies.size(); i++)
     {
-        //if movie is already in map, add actorName to that movie's vector
+        //if movie is already in movies to actors map, add actorName to that movie's vector
         if(mMoviesToActorsMap.find(movies[i]) != mMoviesToActorsMap.end())
         {
             mMoviesToActorsMap[movies[i]].push_back(actorName);
@@ -106,7 +106,6 @@ void IMDBData::reverseMap(const std::string& actorName, const std::vector<std::s
 // Returns: Vector of movies (by reference)
 const std::vector<std::string>& IMDBData::getMoviesFromActor(const std::string& actorName)
 {
-	// TODO: Implement
     //if the actors to movies map contains the actorName, return the lookup of the map
     if(mActorsToMoviesMap.find(actorName) != mActorsToMoviesMap.end())
     {
