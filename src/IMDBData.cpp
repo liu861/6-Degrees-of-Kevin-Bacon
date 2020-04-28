@@ -12,7 +12,6 @@
 // Returns: Nothing
 IMDBData::IMDBData(const std::string& fileName)
 {
-	// TODO: Implement
     //open file
     std::ifstream ifile(fileName);
     //if file couldn't be opened
@@ -27,24 +26,18 @@ IMDBData::IMDBData(const std::string& fileName)
         std::string actor = "";
         //vector to store movie names
         std::vector<std::string> movies;
-        //string to getlines from
+        //string use getline with to store lines from file
         std::string line;
         //iterate through file
         while(!ifile.eof())
         {
+            line.clear();
             //get a line
             std::getline(ifile, line);
-            //if line is a movie
-            if(line[0] == '|')
+            //if line is an actor(first line)
+            if(line[0] != '|')
             {
-                //push movies into movies vector
-                std::string movie = line.substr(1);
-                movies.push_back(movie);
-            }
-            //otherwise the line is an actor!
-            else
-            {
-                //if prev actor clear
+                //if first actor
                 if(actor == "")
                 {
                     //update prev actor
@@ -57,9 +50,17 @@ IMDBData::IMDBData(const std::string& fileName)
                 {
                     //push prev actor into map
                     mActorsToMoviesMap[actor] = movies;
+                    //update prev actor
                     actor = line;
                     movies.clear();
                 }
+            }
+            //otherwise the line is a movie
+            else
+            {
+               //push movies into movies vector
+               std::string movie = line.substr(1);
+               movies.push_back(movie);
             }
         }
         //close file
@@ -80,7 +81,23 @@ IMDBData::IMDBData(const std::string& fileName)
 // Returns: Nothing
 void IMDBData::reverseMap(const std::string& actorName, const std::vector<std::string>& movies)
 {
-	// TODO: Implement
+    for(int i = 0; i < movies.size(); i++)
+    {
+        //if movie is already in map, add actorName to that movie's vector
+        if(mMoviesToActorsMap.find(movies[i]) != mMoviesToActorsMap.end())
+        {
+            mMoviesToActorsMap[movies[i]].push_back(actorName);
+        }
+        //otherwise, create a new vector of actorNames for the movie with
+        //that actor's name in it (for now)
+        else
+        {
+            std::vector<std::string> temp;
+            temp.push_back(actorName);
+            mMoviesToActorsMap[movies[i]] = temp;
+        }
+    }
+            
 }
 
 // Function: getMoviesFromActor
@@ -90,7 +107,13 @@ void IMDBData::reverseMap(const std::string& actorName, const std::vector<std::s
 const std::vector<std::string>& IMDBData::getMoviesFromActor(const std::string& actorName)
 {
 	// TODO: Implement
-	return sEmptyVector;
+    //if the actors to movies map contains the actorName, return the lookup of the map
+    if(mActorsToMoviesMap.find(actorName) != mActorsToMoviesMap.end())
+    {
+        return mActorsToMoviesMap[actorName];
+    }
+    //otherwise, return sEmptyVector
+    return sEmptyVector;
 }
 
 // Function: getActorsFromMovie
@@ -100,7 +123,13 @@ const std::vector<std::string>& IMDBData::getMoviesFromActor(const std::string& 
 const std::vector<std::string>& IMDBData::getActorsFromMovie(const std::string& movieName)
 {
 	// TODO: Implement
-	return sEmptyVector;
+    //if movieName is found in movies to actors map, return the lookup
+    if(mMoviesToActorsMap.find(movieName) != mMoviesToActorsMap.end())
+    {
+        return mMoviesToActorsMap[movieName];
+    }
+    //otherwise, return sEmptyVector
+    return sEmptyVector;
 }
 
 // Function: createGraph

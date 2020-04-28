@@ -15,6 +15,31 @@
 void moviesFromActor(IMDBData& data)
 {
 	// TODO: Implement
+    //prompt user for actor name
+    std::string actorName;
+    std::cout << "Please enter an actor's name: " << std::endl;
+    std::cout << "> ";
+    std::getline(std::cin, actorName);
+    //create vector of movies that the actor has been in
+    const std::vector<std::string>& movies = data.getMoviesFromActor(actorName);
+    //if the returned vector is empty, indicate that the actor has no known movies
+    if(movies.size() == 0)
+    {
+        std::cout << "--------------------------------------------------" << std::endl;
+        std::cout << actorName << " has no known movies!" << std::endl;
+        std::cout << "--------------------------------------------------" << std::endl;
+    }
+    //otherwise, display the movies
+    else
+    {
+        std::cout << "--------------------------------------------------" << std::endl;
+        std::cout << actorName << " has been in " << movies.size() << " movies: " << std::endl;
+        for(int i = 0; i < movies.size(); i++)
+        {
+            std::cout << movies[i] << std::endl;
+        }
+        std::cout << "--------------------------------------------------" << std::endl;
+    }
 }
 
 // Option 2
