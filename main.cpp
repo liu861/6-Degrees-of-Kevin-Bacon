@@ -100,7 +100,7 @@ void relationship(IMDBData& data)
     std::getline(std::cin, actorTwo);
     //display movies linking the 2 actors
     std::cout << "--------------------------------------------------" << std::endl;
-    data.findRelationship(actorOne, actorTwo);
+    std::cout << data.findRelationship(actorOne, actorTwo);
     std::cout << "--------------------------------------------------" << std::endl;
 }
 

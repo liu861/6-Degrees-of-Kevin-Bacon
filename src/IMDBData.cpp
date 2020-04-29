@@ -174,11 +174,17 @@ std::string IMDBData::findRelationship(const std::string& fromActor, const std::
     //first, make sure both actors are in the graph, if not, output error
     if(!mGraph.containsActor(fromActor))
     {
-        std::cout << fromActor << " is unknown!" << std::endl;
+        std::string actor;
+        actor += fromActor;
+        actor += " is unknown!\n";
+        return actor;
     }
     if(!mGraph.containsActor(toActor))
     {
-        std::cout << toActor << " is unknown!" << std::endl;
+        std::string actor;
+        actor += toActor;
+        actor += " is unknown!\n";
+        return actor;
     }
     
     //now implement BFS
@@ -238,13 +244,18 @@ std::string IMDBData::findRelationship(const std::string& fromActor, const std::
     //so if the path was found
     if(pathFound)
     {
-        std::cout << "Found a path!" << " (" << end->mPath.size() << " hops)" << std::endl;
+        std::string path;
+        path += "Found a path! (";
+        path += std::to_string(end->mPath.size());
+        path += " hops)\n";
+        return path;
         //display path
     }
     //otherwise, just output that the path was not found
     else
     {
-        std::cout << "Didn't find a path" << std::endl;
+        std::string path = "Didn't find a path\n";
+        return path;
     }
     mGraph.clearVisited();
     return "";
