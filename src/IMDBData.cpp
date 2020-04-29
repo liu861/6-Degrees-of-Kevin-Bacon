@@ -172,19 +172,17 @@ void IMDBData::createGraph()
 std::string IMDBData::findRelationship(const std::string& fromActor, const std::string& toActor)
 {
     //first, make sure both actors are in the graph, if not, output error
+    std::string result = "";
     if(!mGraph.containsActor(fromActor))
     {
-        std::string actor;
-        actor += fromActor;
-        actor += " is unknown!\n";
-        return actor;
+        result += fromActor;
+        result += " is unknown!\n";
     }
     if(!mGraph.containsActor(toActor))
     {
-        std::string actor;
-        actor += toActor;
-        actor += " is unknown!\n";
-        return actor;
+        result += toActor;
+        result += " is unknown!\n";
+        return result;
     }
     
     //now implement BFS
