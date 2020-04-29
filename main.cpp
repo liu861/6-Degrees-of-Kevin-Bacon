@@ -88,7 +88,20 @@ void actorFromMovies(IMDBData& data)
 // Returns: Nothing
 void relationship(IMDBData& data)
 {
-	// TODO: Implement
+    //prompt user for first actor
+    std::string actorOne;
+    std::cout << "Please enter the first actor's name: " << std::endl;
+    std::cout << "> ";
+    std::getline(std::cin, actorOne);
+    //prompt user for second actor
+    std::string actorTwo;
+    std::cout << "Please enter the second actor's name: " << std::endl;
+    std::cout << "> ";
+    std::getline(std::cin, actorTwo);
+    //display movies linking the 2 actors
+    std::cout << "--------------------------------------------------" << std::endl;
+    data.findRelationship(actorOne, actorTwo);
+    std::cout << "--------------------------------------------------" << std::endl;
 }
 
 
