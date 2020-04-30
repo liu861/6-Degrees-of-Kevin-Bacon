@@ -171,8 +171,9 @@ void IMDBData::createGraph()
 // Returns: A string with the search results
 std::string IMDBData::findRelationship(const std::string& fromActor, const std::string& toActor)
 {
-    //first, make sure both actors are in the graph, if not, output error
+    //string to return result of the search with
     std::string result = "";
+    //first, make sure both actors are in the graph, if not, output error
     if(!mGraph.containsActor(fromActor))
     {
         result += fromActor;
@@ -223,12 +224,13 @@ std::string IMDBData::findRelationship(const std::string& fromActor, const std::
                 {
                     //enqueue the adjacent node
                     BFSQueue.push(i.mOtherActor);
-                    //if the adjacent node's path has size 0
+                    //if the adjacent node's path is empty
                     if(i.mOtherActor->mPath.size() == 0)
                     {
-                        //set adjacent node's path to currentNode's path
+                        //set adjacent node's path to current actor's path
                         i.mOtherActor->mPath = currentNode->mPath;
                         //push adjacent node's relevant information (destination name and info)
+                        //append additional pathpair to represent hop of visiting
                         PathPair info(i.mMovieName, currentNode->mName);
                         i.mOtherActor->mPath.push_back(info);
                     }
@@ -242,21 +244,49 @@ std::string IMDBData::findRelationship(const std::string& fromActor, const std::
     //so if the path was found
     if(pathFound)
     {
-        std::string path;
-        path += "Found a path! (";
-        path += std::to_string(end->mPath.size());
-        path += " hops)\n";
-        return path;
+        result += "Found a path! (";
+        result += std::to_string(end->mPath.size());
+        result += " hops)\n";
         //display path
+        int traverse = 0; //counter through path
+        for(auto i : end->mPath)
+        {
+            if(traverse == 0)
+            {
+                result += i.getActorName();
+                result += " was in...\n";
+                result += i.getMovieName();
+                result += " with ";
+                if(end->mPath.size() == 1)
+                {
+                    result += end->mName;
+                    result += "\n";
+                }
+                traverse++;
+            }
+            //connections of "who was in..."
+            else
+            {
+                result += i.getActorName();
+                result += " who was in...\n";
+                result += i.getMovieName();
+                result += " with ";
+                if(end->mPath.size() == traverse)
+                {
+                    result += end->mName;
+                    result += "\n";
+                }
+                traverse++;
+            }
+        }
     }
     //otherwise, just output that the path was not found
     else
     {
-        std::string path = "Didn't find a path\n";
-        return path;
+        result = "Didn't find a path\n";
     }
     mGraph.clearVisited();
-    return "";
+    return result;
 }
 
 
