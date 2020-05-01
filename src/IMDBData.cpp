@@ -68,7 +68,7 @@ IMDBData::IMDBData(const std::string& fileName)
     }
     
     //generate movie to actors map
-    for(auto itr : mActorsToMoviesMap)
+    for(auto& itr : mActorsToMoviesMap)
     {
         reverseMap(itr.first, itr.second);
     }
@@ -153,7 +153,7 @@ void IMDBData::createGraph()
         {
             //set first actor to pair
             ActorNode* firstActor = mGraph.getActorNode(actors[j]);
-            for(int k = 0; k < actors.size(); k++)
+            for(int k = j+1; k < actors.size(); k++)
             {
                 //set second actor to pair
                 ActorNode* secondActor = mGraph.getActorNode(actors[k]);
@@ -179,121 +179,111 @@ std::string IMDBData::findRelationship(const std::string& fromActor, const std::
         result += fromActor;
         result += " is unknown!\n";
     }
-    if(!mGraph.containsActor(toActor))
+    else if(!mGraph.containsActor(toActor))
     {
         result += toActor;
         result += " is unknown!\n";
-        return result;
     }
-    
-    //now implement BFS
-    //create queue of actorNodes, and enqueue the node we're starting from
-    ActorNode* begin = mGraph.getActorNode(fromActor);
-    ActorNode* target = mGraph.getActorNode(toActor);
-    
-    //create queue
-    std::queue<ActorNode*> BFSQueue;
-    BFSQueue.push(begin);
-    
-    //boolean to keep track of whether path is found
-    bool pathFound = false;
-    
-    //while the BFS queue is not empty
-    while(BFSQueue.size() != 0)
+    else if(!mGraph.containsActor(fromActor) && !mGraph.containsActor(toActor))
     {
-        //dequeue the front actor node, save in currentNode
-        ActorNode* currentNode;
-        currentNode = BFSQueue.front();
-        BFSQueue.pop();
-        //if currentNode = target, we found a path!
-        if(currentNode == target)
+        result += fromActor;
+        result += " is unknown!\n";
+        result += toActor;
+        result += " is unknown!\n";
+    }
+    else
+    {
+        //now implement BFS
+        //create queue of actorNodes, and enqueue the node we're starting from
+        ActorNode* begin = mGraph.getActorNode(fromActor);
+        ActorNode* target = mGraph.getActorNode(toActor);
+        
+        //create queue
+        std::queue<ActorNode*> BFSQueue;
+        BFSQueue.push(begin);
+        
+        //boolean to keep track of whether path is found
+        bool pathFound = false;
+        ActorNode* currentNode = nullptr;
+        //while the BFS queue is not empty
+        while(BFSQueue.size() != 0)
         {
-            pathFound = true;
-            break;
-        }
-        //otherwise if currentNode's visited bool is false
-        else if(currentNode->mIsVisited == false)
-        {
-            //visit currentNode
-            currentNode->mIsVisited = true;
-            //iterate through currentNode's edges
-            for(auto i : currentNode->mEdges)
+            //dequeue the front actor node, save in currentNode
+            currentNode = BFSQueue.front();
+            BFSQueue.pop();
+            //if currentNode = target, we found a path!
+            if(currentNode == target)
             {
-                //if the visited flag is false
-                if(i.mOtherActor->mIsVisited == false)
+                pathFound = true;
+                break;
+            }
+            //otherwise if currentNode's visited bool is false
+            else if(currentNode->mIsVisited == false)
+            {
+                //visit currentNode
+                currentNode->mIsVisited = true;
+                //iterate through currentNode's edges
+                for(auto& i : currentNode->mEdges)
                 {
-                    //enqueue the adjacent node
-                    BFSQueue.push(i.mOtherActor);
-                    //if the adjacent node's path is empty
-                    if(i.mOtherActor->mPath.size() == 0)
+                    //if the visited flag is false
+                    if(i.mOtherActor->mIsVisited == false)
                     {
-                        //set adjacent node's path to current actor's path
-                        i.mOtherActor->mPath = currentNode->mPath;
-                        //push adjacent node's relevant information (movie and actor name)
-                        //append additional pathpair to represent hop of visiting
-                        PathPair info(i.mMovieName, currentNode->mName);
-                        i.mOtherActor->mPath.push_back(info);
+                        //if the adjacent node's path is empty
+                        if(i.mOtherActor->mPath.size() == 0)
+                        {
+                            //set adjacent node's path to current actor's path
+                            i.mOtherActor->mPath = currentNode->mPath;
+                            //push adjacent node's relevant information (movie and actor name)
+                            //append additional pathpair to represent hop of visiting
+                            PathPair info(i.mMovieName, i.mOtherActor->mName);
+                            i.mOtherActor->mPath.push_back(info);
+                        }
+                        //enqueue the adjacent node
+                        BFSQueue.push(i.mOtherActor);
                     }
                 }
             }
         }
-    }
-    //The BFS should finish in one of two cases:
-    //1. The queue becomes empty (in which case it failed to find a path)
-    //2. The second actor was found (it found a path)
-    //so if the path was found
-    if(pathFound)
-    {
-        result += "Found a path! (";
-        result += std::to_string(target->mPath.size());
-        result += " hops)\n";
-        //display path
-        int traverse = 0; //counter through path
-        for(auto i : target->mPath)
+        //The BFS should finish in one of two cases:
+        //1. The queue becomes empty (in which case it failed to find a path)
+        //2. The second actor was found (it found a path)
+        //so if the path was found
+        if(pathFound)
         {
-            if(traverse == 0)
+            result += "Found a path! (";
+            result += std::to_string(target->mPath.size());
+            result += " hops)\n";
+            //display path
+            int traverse = 1; //counter through path
+            std::string startActor = fromActor;
+            result += startActor;
+            result += " was in...\n";
+            for(auto& i : currentNode->mPath)
             {
-                std::string actor = i.getActorName();
-                result += actor;
-                result += " was in...\n";\
                 std::string movie = i.getMovieName();
                 result += movie;
                 result += " with ";
-                if(target->mPath.size() == 1)
+                std::string nextActor = i.getActorName();
+                result += nextActor;
+                if(currentNode->mPath.size() == traverse)
                 {
-                    std::string targetActor = target->mName;
-                    result += targetActor;
                     result += "\n";
                 }
-                traverse++;
-            }
-            //connections of "who was in..."
-            else
-            {
-                std::string actor = i.getActorName();
-                result += actor;
-                result += " who was in...\n";\
-                std::string movie = i.getMovieName();
-                result += movie;
-                result += " with ";
-                traverse++;
-                if(target->mPath.size() == traverse)
+                else
                 {
-                    std::string targetActor = target->mName;
-                    result += targetActor;
-                    result += "\n";
+                    result += " who was in...\n";
                 }
+                traverse++;
             }
         }
-        return result;
-    }
-    //otherwise, just output that the path was not found
-    else
-    {
-        result = "Didn't find a path\n";
-        return result;
+        //otherwise, just output that the path was not found
+        else
+        {
+            result = "Didn't find a path\n";
+        }
     }
     mGraph.clearVisited();
+    return result;
 }
 
 
