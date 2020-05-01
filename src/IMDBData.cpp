@@ -230,7 +230,7 @@ std::string IMDBData::findRelationship(const std::string& fromActor, const std::
                         //set adjacent node's path to current actor's path
                         i.mOtherActor->mPath = currentNode->mPath;
                         //push adjacent node's relevant information (movie and actor name)
-                        //apptarget additional pathpair to represent hop of visiting
+                        //append additional pathpair to represent hop of visiting
                         PathPair info(i.mMovieName, currentNode->mName);
                         i.mOtherActor->mPath.push_back(info);
                     }
