@@ -174,6 +174,14 @@ std::string IMDBData::findRelationship(const std::string& fromActor, const std::
     //string to return result of the search with
     std::string result = "";
     //first, make sure both actors are in the graph, if not, output error
+    if(!mGraph.containsActor(fromActor) && !mGraph.containsActor(toActor))
+    {
+        result += fromActor;
+        result += " is unknown!\n";
+        result += toActor;
+        result += " is unknown!\n";
+        return result;
+    }
     if(!mGraph.containsActor(fromActor))
     {
         result += fromActor;
@@ -181,13 +189,6 @@ std::string IMDBData::findRelationship(const std::string& fromActor, const std::
     }
     else if(!mGraph.containsActor(toActor))
     {
-        result += toActor;
-        result += " is unknown!\n";
-    }
-    else if(!mGraph.containsActor(fromActor) && !mGraph.containsActor(toActor))
-    {
-        result += fromActor;
-        result += " is unknown!\n";
         result += toActor;
         result += " is unknown!\n";
     }
