@@ -70,7 +70,7 @@ IMDBData::IMDBData(const std::string& fileName)
     //generate movie to actors map
     for(auto& itr : mActorsToMoviesMap)
     {
-        reverseMap(itr.first, itr.second);
+        reverseMap(itr.first, mActorsToMoviesMap[itr.first]);
     }
 }
 
@@ -147,7 +147,7 @@ void IMDBData::createGraph()
         const std::string& movieName = i.first;
         //get actors that were in this movie
         //create vector of actors
-        const std::vector<std::string> actors = mMoviesToActorsMap[movieName];
+        const std::vector<std::string>& actors = mMoviesToActorsMap[movieName];
         //make n^2 edges between the actors (because edges = nodes^2)
         for(int j = 0; j < actors.size(); j++)
         {
