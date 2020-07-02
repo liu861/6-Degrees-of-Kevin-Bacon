@@ -8,3 +8,5 @@ Email: liu861@usc.edu
 Platform: [MAC]
 
 ### Notes ###
+
+This is a C++ program that uses hashmaps, queues, and linked lists to map actors and actresses to ones that have connections in their movies. 
